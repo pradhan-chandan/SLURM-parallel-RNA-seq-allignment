@@ -13,6 +13,8 @@ Automatically organizes output into per-sample directories
 
 
 code:
+(..... lines are comments)
+
 
 #!/bin/bash
 
@@ -39,10 +41,10 @@ OUTPUT_DIR=/path_to_folder_output/
 THREADS=${SLURM_CPUS_PER_TASK}  # Threads per sample
 
 
-FASTQ_FILES=($(ls ${FASTQ_DIR}/*_1.fq.gz)) # List of R1 files (paired-end reads)
-R1_FILE=${FASTQ_FILES[$SLURM_ARRAY_TASK_ID]} # Select the R1 file based on the array index
-BASE_NAME=$(basename ${R1_FILE} _1.fq.gz) # Extract the sample name
-R2_FILE="${FASTQ_DIR}/${BASE_NAME}_2.fq.gz" # Define the corresponding R2 file
+FASTQ_FILES=($(ls ${FASTQ_DIR}/*_1.fq.gz))          ..... List of R1 files (paired-end reads)
+R1_FILE=${FASTQ_FILES[$SLURM_ARRAY_TASK_ID]}          ..... Select the R1 file based on the array index
+BASE_NAME=$(basename ${R1_FILE} _1.fq.gz)          ..... Extract the sample name
+R2_FILE="${FASTQ_DIR}/${BASE_NAME}_2.fq.gz"          ..... Define the corresponding R2 file
 
     
 # Create output directory for sample
@@ -55,14 +57,14 @@ mkdir -p "${SAMPLE_OUTPUT_DIR}"
 
 STAR --runThreadN ${THREADS} \
  --genomeDir "${GENOME_DIR}" \
- --readFilesCommand gunzip -c \                     #to decompress the files
- --readFilesIn ${R1_FILE} ${R2_FILE} \              #read the fastq files
- --sjdbGTFfile ${gtf_file} \                        #read gtf file
- --sjdbGTFfeatureExon CDS \                         #read exons mentioned as cds in annotation file (only required if exons are mentioned something else)
+ --readFilesCommand gunzip -c \                     .....to decompress the files
+ --readFilesIn ${R1_FILE} ${R2_FILE} \              .....read the fastq files
+ --sjdbGTFfile ${gtf_file} \                        .....read gtf file
+ --sjdbGTFfeatureExon CDS \                         .....read exons mentioned as cds in annotation file (only required if exons are mentioned something else)
  --outFileNamePrefix "${SAMPLE_OUTPUT_DIR}/" \
- --alignIntronMin 20 \                              #minimun intron length specified
- --alignIntronMax 500 \                             #maximum intron length specified
- --outSAMtype BAM SortedByCoordinate                #output as .bam file
+ --alignIntronMin 20 \                              .....minimun intron length specified
+ --alignIntronMax 500 \                             .....maximum intron length specified
+ --outSAMtype BAM SortedByCoordinate                .....output as .bam file
    
     
     echo "Alignment completed for ${SAMPLE_NAME}"
