@@ -4,26 +4,27 @@ SLURM batch script for parallel RNA-seq read alignment using STAR, designed for 
 
 Features:
 
-Parallel processing of multiple samples via SLURM job arrays
-Supports paired-end FASTQ input (.fq.gz)
-Configurable intron length thresholds (alignIntronMin / alignIntronMax)
-Handles non-standard GFF/GTF annotations where exons are annotated as CDS
-Outputs coordinate-sorted BAM files per sample
-Automatically organizes output into per-sample directories
+Parallel processing of multiple samples via SLURM job arrays. \
+Supports paired-end FASTQ input (.fq.gz). \
+Configurable intron length thresholds (alignIntronMin / alignIntronMax). \
+Handles non-standard GFF/GTF annotations where exons are annotated as CDS. \
+Outputs coordinate-sorted BAM files per sample. \
+Automatically organizes output into per-sample directories.
 
+# SLURM script for alignment
 
-# SBATCH submission command
+```
 #!/bin/bash
 
 #SBATCH --profile=All \
-#SBATCH --job-name=B157_Alignment \
-#SBATCH --account=xxxx \
+#SBATCH --job-name=genome_Alignment \
+#SBATCH --account=ax \
 #SBATCH --cpus-per-task=4 \
 #SBATCH --mem=50G \
 #SBATCH --time=24:00:00 \
 #SBATCH --array=0-9 \
-#SBATCH --output=Alignment_output_and_error/B157_Alignment%A_%a.out \
-#SBATCH --error=Alignment_output_and_error/B157_Alignment%A_%a.err
+#SBATCH --output=Alignment_output_and_error/genome_Alignment%A_%a.out \
+#SBATCH --error=Alignment_output_and_error/genome_Alignment%A_%a.err
 
 
 module load star/2.7.11b
@@ -32,7 +33,7 @@ module load star/2.7.11b
 # Set paths
 FASTQ_DIR=/path_to_folder_fastq/ \
 GENOME_DIR=/path_to_folder_genome_directory/ \
-gtf_file=/path_to_folder_genome_annotation/B157.gff \
+gtf_file=/path_to_folder_genome_annotation/genome.gff \
 OUTPUT_DIR=/path_to_folder_output/
 
 THREADS=${SLURM_CPUS_PER_TASK}  # Threads per sample
@@ -46,7 +47,7 @@ R2_FILE="${FASTQ_DIR}/${BASE_NAME}_2.fq.gz"
     
 # Create output directory for sample
 SAMPLE_NAME=${BASE_NAME%%-*} \
-SAMPLE_OUTPUT_DIR="${OUTPUT_DIR}/${SAMPLE_NAME}_B157_500max" \
+SAMPLE_OUTPUT_DIR="${OUTPUT_DIR}/${SAMPLE_NAME}_genome_500max" \
 mkdir -p "${SAMPLE_OUTPUT_DIR}"    
     
 # Run STAR alignment
@@ -68,3 +69,4 @@ STAR \
     --outSAMtype BAM SortedByCoordinate
 
 echo "Alignment completed for ${SAMPLE_NAME}"
+```
